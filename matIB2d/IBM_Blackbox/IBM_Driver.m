@@ -202,6 +202,7 @@ y = (0:dy:Ly-dy)';
 
 % READ IN LAGRANGIAN POINTS %
 [Nb,xLag,yLag] = read_Vertex_Points(struct_name);
+
 grid_Info(8) = Nb;          % # Total Number of Lagrangian Pts.
 xLag_P = xLag;              % Initialize previous Lagrangian x-Values (for use in muscle-model)
 yLag_P = yLag;              % Initialize previous Lagrangian y-Values (for use in muscle-model)
@@ -1561,24 +1562,16 @@ fileID = fopen(filename);
 
 % Read in the file, use 'CollectOutput' to gather all similar data together
 % and 'CommentStyle' to to end and be able to skip lines in file.
-C = textscan(fileID,'%f %f','CollectOutput',1);
+C = textscan(fileID,'%f %f','CollectOutput',1, 'headerLines', 1);
 
 
 fclose(fileID);     %Close the data file.
 
 vertices = C{1};    %Stores all read in data in vertices (N+1,2) array
+N = size(vertices, 1);
 
-N = vertices(1,1);  % # of Lagrangian Pts
-xLag = zeros(N,1);  % Initialize storage for Lagrangian Pts.
-yLag = xLag;        % Initialize storage for Lagrangian Pts.
-
-for i=1:N
-   xLag(i,1) = vertices(i+1,1); %Stores x-values of Lagrangian Mesh
-   yLag(i,1) = vertices(i+1,2); %Stores y-values of Lagrangian Mesh
-   
-end
-
-
+xLag = vertices(:, 1);  % Initialize storage for Lagrangian Pts.
+yLag = vertices(:, 2);        % Initialize storage for Lagrangian Pts.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -1780,16 +1773,16 @@ filename = [struct_name '.target'];  %Name of file to read in
 
 fileID = fopen(filename);
 
-    % Read in the file, use 'CollectOutput' to gather all similar data together
-    % and 'CommentStyle' to to end and be able to skip lines in file.
-    C = textscan(fileID,'%f %f','CollectOutput',1);
+% Read in the file, use 'CollectOutput' to gather all similar data together
+% and 'CommentStyle' to to end and be able to skip lines in file.
+C = textscan(fileID,'%f %f','CollectOutput',1, 'headerLines', 1);
 
 fclose(fileID);        %Close the data file.
 
 targets_info = C{1};    %Stores all read in data in vertices (N+1,2) array
 
 %Store all elements on .spring file into a matrix starting w/ 2nd row of read in data.
-targets = targets_info(2:end,1:2);
+targets = targets_info(1:end,1:2);
 
 %targets: col 1: Lag Pt. ID w/ Associated Target Pt.
 %         col 2: target STIFFNESSES
